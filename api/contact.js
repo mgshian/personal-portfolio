@@ -12,32 +12,35 @@ module.exports = async (req, res) => {
     }
 
     try {
-        // Use environment variables (set in Vercel Dashboard)
+        // Use a reliable SMTP service
         const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 465,
+            host: process.env.SMTP_HOST || 'smtp.gmail.com',
+            port: process.env.SMTP_PORT || 465,
             secure: true,
             auth: {
-                user: process.env.GMAIL_USER,
-                pass: process.env.GMAIL_APP_PASSWORD, // must be App Password
+                user: process.env.SMTP_USER, // your SMTP email
+                pass: process.env.SMTP_PASS, // your SMTP password / app password
             },
         });
 
-        await transporter.verify(); // ✅ check connection
+        // Debugging
+        await transporter.verify();
 
         const mailOptions = {
-            from: `"Contact Form" <${process.env.GMAIL_USER}>`,
-            to: process.env.RECIPIENT_EMAIL || process.env.GMAIL_USER,
+            from: process.env.SMTP_USER,
+            to: process.env.RECIPIENT_EMAIL || process.env.SMTP_USER,
             subject: 'New Contact Form Submission',
-            text: `Name: ${fullname}\nEmail: ${email}\nMessage:\n${message}`,
+            text: `You received a new contact form submission:\n\nName: ${fullname}\nEmail: ${email}\nMessage:\n${message}`,
             replyTo: email,
         };
 
         await transporter.sendMail(mailOptions);
 
-        return res.status(200).json({ message: 'Message sent successfully!' });
+        return res.status(200).json({ message: 'Message received and emailed successfully!' });
     } catch (err) {
         console.error('Email error:', err);
+
+        // Detailed error message for debugging in Vercel logs
         return res.status(500).json({ error: 'Failed to send email', details: err.message });
     }
 };
