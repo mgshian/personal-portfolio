@@ -893,7 +893,7 @@
 
           <h3 class="h3 form-title">Contact Form</h3>
 
-          <form action="#" class="form" data-form>
+          <form action="https://formspree.io/f/mwplgpyz" method="POST" class="form" data-form>
 
             <div class="input-wrapper">
               <input type="text" name="fullname" class="form-input" placeholder="Full name" required data-form-input>
@@ -935,45 +935,27 @@
 
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const form = document.querySelector('[data-form]');
-      const inputs = document.querySelectorAll('[data-form-input]');
-      const submitButton = document.querySelector('[data-form-btn]');
+    // Get form elements
+    const form = document.querySelector('[data-form]');
+    const inputs = form.querySelectorAll('[data-form-input]');
+    const btn = form.querySelector('[data-form-btn]');
 
-      // Enable button when all inputs have content
-      form.addEventListener('input', () => {
-        const allFilled = Array.from(inputs).every(input => input.value.trim() !== '');
-        submitButton.disabled = !allFilled;
-      });
-
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const fullname = form.fullname.value;
-        const email = form.email.value;
-        const message = form.message.value;
-
-        try {
-          // Updated endpoint for Vercel
-          const response = await fetch('/api/contact', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ fullname, email, message })
-          });
-
-          const result = await response.text();
-
-          alert(result); // Show success message
-          form.reset(); // Clear the form
-          submitButton.disabled = true; // Disable button again
-        } catch (error) {
-          console.error('Error sending form:', error);
-          alert('There was a problem sending your message. Please try again later.');
+    // Function to check if all inputs have a value
+    function checkInputs() {
+      let allFilled = true;
+      inputs.forEach(input => {
+        if (!input.value.trim()) {
+          allFilled = false;
         }
       });
-    });
+      btn.disabled = !allFilled;
+    }
+
+    // Listen for input changes
+    inputs.forEach(input => input.addEventListener('input', checkInputs));
+
+    // Optional: enable button on page load if fields are pre-filled
+    checkInputs();
   </script>
 
 
