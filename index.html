@@ -903,7 +903,8 @@
 
             <textarea name="message" class="form-input" placeholder="Your Message" required data-form-input></textarea>
 
-            <button class="form-btn" type="submit" disabled data-form-btn>
+            <button class="form-btn" type="submit" data-form-btn>
+
               <ion-icon name="paper-plane"></ion-icon>
               <span>Send Message</span>
             </button>
@@ -935,27 +936,17 @@
 
 
   <script>
-    // Get form elements
     const form = document.querySelector('[data-form]');
     const inputs = form.querySelectorAll('[data-form-input]');
-    const btn = form.querySelector('[data-form-btn]');
+    const button = form.querySelector('[data-form-btn]');
 
-    // Function to check if all inputs have a value
-    function checkInputs() {
-      let allFilled = true;
-      inputs.forEach(input => {
-        if (!input.value.trim()) {
-          allFilled = false;
-        }
+    inputs.forEach(input => {
+      input.addEventListener('input', () => {
+        const allFilled = Array.from(inputs).every(i => i.value.trim() !== '');
+        button.disabled = !allFilled;
       });
-      btn.disabled = !allFilled;
-    }
+    });
 
-    // Listen for input changes
-    inputs.forEach(input => input.addEventListener('input', checkInputs));
-
-    // Optional: enable button on page load if fields are pre-filled
-    checkInputs();
   </script>
 
 
